@@ -23,9 +23,10 @@ from PIL import ImageOps
 from PIL.ExifTags import TAGS
 from exif import Image as exif_Image
 
+ADDITION = "./"
 
 def url_wrangler(raw_url, needed_url_type):
-    """Update and decide the proper url name convention to be used, bascially do we/do not want './' in url string
+    """Update and decide the proper url name convention to be used, basically do we/do not want './' in url string
     needed_url_type[arg] = 1 --- 'photos/nyc.JPG'
     needed_url_type[arg] = 2 --- './photos/nyc.JPG'
     """
@@ -39,12 +40,10 @@ def url_wrangler(raw_url, needed_url_type):
     # decide if the raw_url is fit for the url_type_needed
     if current_url_type == needed_url_type:
         return checked_url
-
     # update the raw_url (if needed) to the url_type_needed
     elif current_url_type < needed_url_type:
         # need to add './' to the string
-        addition = "./"
-        temp = addition + checked_url
+        temp = ADDITION + checked_url
         checked_url = temp
         return checked_url
     else:
@@ -54,7 +53,10 @@ def url_wrangler(raw_url, needed_url_type):
         return checked_url
 
 def image_add_METADATA(my_dict, raw_url):
-    # load image
+    # notify user -- check metadata start
+    print("\nBegin adding image Metadata.")
+
+    # load image file
     add_METADATA_url = url_wrangler(raw_url, 2)
     with open(f"{add_METADATA_url}", "r+b") as image_file:
         image_file = exif_Image(image_file)
@@ -63,23 +65,26 @@ def image_add_METADATA(my_dict, raw_url):
     results_JSON_labels = json.dumps(my_dict["labels"])
     image_file.image_description = results_JSON_labels
 
-
-    # save image with updates
+    # save image file with updates
     with open(f"{add_METADATA_url}", "wb") as image_file_updated:
         image_file_updated.write(image_file.get_file())
 
-    ## close file (possible issue fixer?)
+    # notify user -- check metadata ended
+    print("\nFinished adding image Metadata.")
+
+    # close image file
     image_file_updated.close()
 
+    return None
 
 def image_check_METADATA(raw_url):
     """
-    Mostly this function is implemented to be able to check the metatdta of a image after del or add
+    Mostly this function is implemented to be able to check the metadata of a image after del or add
     """
     # notify user -- check metadata start
     print("\nBegin checking current Metadata.")
 
-    # load image
+    # load image file
     check_METADATA_url = url_wrangler(raw_url, 1)
     file_name = os.path.abspath(check_METADATA_url)
 
@@ -111,26 +116,27 @@ def image_check_METADATA(raw_url):
 
     # notify user -- check metadata end
     print("\nCurrent Metadata has been printed for the image.")
+
+    # return new labels
     return results_JSON
 
 def image_del_METADATA(raw_url):
     # notify user -- delete metadata start
     print("\nBegin deleting Metadata.")
 
-    # load image
+    # load image, wrangle URL if needed
     del_METADATA_url = url_wrangler(raw_url, 1)
     original = PIL_Image.open(del_METADATA_url)
-    new_image_path = del_METADATA_url
+    save_image_path = del_METADATA_url
 
     # rotate image to correct orientation before removing EXIF data
     original = ImageOps.exif_transpose(original)
 
     # save image without tags, apparently a simple re-save will clear this... neat!
-    # close files (possible issue fixer?)
     stripped = PIL_Image.new(original.mode, original.size)
     stripped.putdata(list(original.getdata()))
     original.close()
-    stripped.save(new_image_path)
+    stripped.save(save_image_path)
     stripped.close()
 
     # notify user -- delete metadata end
@@ -142,7 +148,7 @@ def image_process_only(raw_url):
     # Imports the Google Cloud client library
     client = vision.ImageAnnotatorClient()
 
-    # load image
+    # load image file
     load_image_url = url_wrangler(raw_url, 1)
     file_name = os.path.abspath(load_image_url)
     try:
@@ -155,12 +161,11 @@ def image_process_only(raw_url):
         print('Error with loading photo')
         exit(1)
 
-    # create the applied Vision outputs for each type
+    # create the applied Google Vision API outputs for each type
     label_response = client.label_detection(image=image)
     text_response = client.text_detection(image=image)
     logo_response = client.logo_detection(image=image)
     landmark_response = client.landmark_detection(image=image)
-    face_response = client.face_detection(image=image)
 
     # create dictionary to hold output data
     my_dict = {"labels": []}
@@ -169,11 +174,12 @@ def image_process_only(raw_url):
     for label in label_response.label_annotations:
         my_dict["labels"].append(label.description)
 
-    # append any logo findings
+    # append any logos
     for logo in logo_response.logo_annotations:
         my_dict["labels"].append(logo.description)
 
-    # append any text findings, counter needed as this would give a string with \n listing all
+    # append any text
+    # counter needed as this would give a string with \n listing all
     counter_to_skip_first = 0
     for text in text_response.text_annotations:
         if counter_to_skip_first == 0:
@@ -186,55 +192,17 @@ def image_process_only(raw_url):
     for landmark in landmark_response.landmark_annotations:
         my_dict["labels"].append(landmark.description)
 
-    # append any emotions found within faces of people
-    # emotions/sentiments:: surprise, joy, anger, neutral
-    for face in face_response.face_annotations:
-        count_for_neutral = 0
-
-        likelihood1 = vision.Likelihood(face.surprise_likelihood)
-        if likelihood1.name == "LIKELY":
-            my_dict["labels"].append("Face surprised")
-        elif likelihood1.name == "VERY_UNLIKELY":
-            my_dict["labels"].append("Face not surprised")
-            count_for_neutral += 1
-        else:
-            continue
-
-        likelihood2 = vision.Likelihood(face.joy_likelihood)
-        if likelihood2.name == "LIKELY":
-            my_dict["labels"].append("Face has joy")
-        elif likelihood2.name == "VERY_UNLIKELY":
-            my_dict["labels"].append("Face does not has joy")
-            count_for_neutral += 1
-        else:
-            continue
-
-        likelihood3 = vision.Likelihood(face.anger_likelihood)
-        if likelihood3.name == "LIKELY":
-            my_dict["labels"].append("Face is angered")
-        elif likelihood3.name == "VERY_UNLIKELY":
-            my_dict["labels"].append("Face is not angered")
-            count_for_neutral += 1
-        else:
-            continue
-
-        if count_for_neutral == 3:
-            my_dict["labels"].append("Face is neutral")
-        else:
-            continue
-
-    # update the image with the new labels found
+    # capture findings into JSON format
     results_JSON = json.dumps(my_dict)
 
-    # close file
+    # close image file
     image_file.close()
 
+    ### May not need to use for final production, but good to see on stdio ###
     # notify user -- printing new labelings found
     print("\nBegin printing labels found from image.")
-
     # print out the new labels
     print(results_JSON)
-
     # notify user -- finished printing new labelings found
     print("\nPrinting labels found from image is finished.")
 
@@ -245,7 +213,7 @@ def image_process_with_save(raw_url):
     # Imports the Google Cloud client library
     client = vision.ImageAnnotatorClient()
 
-    # load image
+    # load image file
     load_image_url = url_wrangler(raw_url, 1)
     file_name = os.path.abspath(load_image_url)
     try:
@@ -263,7 +231,6 @@ def image_process_with_save(raw_url):
     text_response = client.text_detection(image=image)
     logo_response = client.logo_detection(image=image)
     landmark_response = client.landmark_detection(image=image)
-    face_response = client.face_detection(image=image)
 
     # create dictionary to hold output data
     my_dict = {"labels": []}
@@ -276,7 +243,8 @@ def image_process_with_save(raw_url):
     for logo in logo_response.logo_annotations:
         my_dict["labels"].append(logo.description)
 
-    # append any text findings, counter needed as this would give a string with \n listing all
+    # append any text findings
+    # counter needed as this would give a string with \n listing all
     counter_to_skip_first = 0
     for text in text_response.text_annotations:
         if counter_to_skip_first == 0:
@@ -289,49 +257,12 @@ def image_process_with_save(raw_url):
     for landmark in landmark_response.landmark_annotations:
         my_dict["labels"].append(landmark.description)
 
-    # append any emotions found within faces of people
-    # emotions/sentiments:: surprise, joy, anger, neutral
-    for face in face_response.face_annotations:
-        count_for_neutral = 0
-
-        likelihood1 = vision.Likelihood(face.surprise_likelihood)
-        if likelihood1.name == "LIKELY":
-            my_dict["labels"].append("Face surprised")
-        elif likelihood1.name == "VERY_UNLIKELY":
-            my_dict["labels"].append("Face not surprised")
-            count_for_neutral += 1
-        else:
-            continue
-
-        likelihood2 = vision.Likelihood(face.joy_likelihood)
-        if likelihood2.name == "LIKELY":
-            my_dict["labels"].append("Face has joy")
-        elif likelihood2.name == "VERY_UNLIKELY":
-            my_dict["labels"].append("Face does not has joy")
-            count_for_neutral += 1
-        else:
-            continue
-
-        likelihood3 = vision.Likelihood(face.anger_likelihood)
-        if likelihood3.name == "LIKELY":
-            my_dict["labels"].append("Face is angered")
-        elif likelihood3.name == "VERY_UNLIKELY":
-            my_dict["labels"].append("Face is not angered")
-            count_for_neutral += 1
-        else:
-            continue
-
-        if count_for_neutral == 3:
-            my_dict["labels"].append("Face is neutral")
-        else:
-            continue
-
     # convert the created dictionary to JSON format
     results_JSON = json.dumps(my_dict)
     print("\nHere is the current Metadata: \n")
     print(results_JSON)
 
-    # close file
+    # close image file
     image_file.close()
 
     # add new labelings to the image
