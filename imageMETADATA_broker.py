@@ -6,9 +6,10 @@ app = Flask(__name__)
 
 @app.route("/image_process_only", methods=["GET", "POST"])
 def image_process_only():
-    """HTTP GET request to get labels off images and save them as metadata exif tags 'image_description'
+    """HTTP GET request to get labels off images (only)
     Example of end point: http://127.0.0.1:5000/image_process_only?url=photos/nyc_has_text.JPG
-    gives JSON confirmation of completed request back to requester
+    displays the Google Vision API processing to the user through stdio
+    returns JSON data including the Google Vision API processing
      """
     raw_url = request.args.get("url")
 
@@ -18,7 +19,8 @@ def image_process_only():
 def image_process_with_save():
     """HTTP GET request to get labels off images and save them as metadata exif tags 'image_description'
     Example of end point: http://127.0.0.1:5000/image_process_with_save?url=photos/nyc_has_text.JPG
-    gives JSON confirmation of completed request back to requester
+    displays the Google Vision API processing to the user through stdio
+    returns JSON data including the Google Vision API processing
      """
     raw_url = request.args.get("url")
 
@@ -29,7 +31,8 @@ def image_process_with_save():
 def image_del_METADATA():
     """HTTP GET request to delete all current metadata on the image
     Example of end point: http://127.0.0.1:5000/image_del_METADATA?url=photos/nyc_has_text.JPG
-    gives JSON confirmation of completed request back to requester
+    displays process
+    unless using the (.image_check_METADATA) testing, it will not return anything, except this string below.
     """
     raw_url = request.args.get("url")
     imageMETADATA.image_del_METADATA(raw_url)
