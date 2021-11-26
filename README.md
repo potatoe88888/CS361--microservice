@@ -7,7 +7,7 @@ This program utilizes Google Vision API and python librarys to execute three tas
 ## microservice -- Python libraries needed
 os, sys, io, json, PIL, exif
 
-## microservice -- how to run (application should be running, output in terminal too)
+## microservice -- how to run (main application should be running)
 1. Navigate to your directory which will hold this repository through terminal of choice.
 2. Upload your photos into the photo directory.
 3. Depending on your python PATH variable set up, you could be using 'python' or 'python3', figure this out before proceeding the user could also house another variable other than these for python running more info? check out [Source 1](http://net-informations.com/python/intro/path.html) and [Source 2](https://geek-university.com/python/add-python-to-the-windows-path/). Run (imageMETEDATA_broker.py).
