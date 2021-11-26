@@ -28,17 +28,20 @@ def image_process_with_save():
 
 
 @app.route("/image_del_METADATA", methods=["GET", "POST"])
-def image_del_METADATA():
+def image_del_METADATA(debug=0):
     """HTTP GET request to delete all current metadata on the image
     Example of end point: http://127.0.0.1:5000/image_del_METADATA?url=photos/nyc_has_text.JPG
     displays process
     unless using the (.image_check_METADATA) testing, it will not return anything, except this string below.
+    defaulted to not show the testing output, checking the metadata of the image, user can enter debug = 1
+    as parameter if the need becomes.
     """
     raw_url = request.args.get("url")
     imageMETADATA.image_del_METADATA(raw_url)
 
     # for testing the image processing saved correctly in environment
-    #imageMETADATA.image_check_METADATA(raw_url)
+    if debug == 1:
+        imageMETADATA.image_check_METADATA(raw_url)
 
     return '''Metadata has been removed from image.'''
 
