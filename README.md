@@ -38,15 +38,15 @@ http://127.0.0.1:[PORT NUMER HERE]/image_del_METADATA?url=[INSERT FILE HERE]
 
 ## microservice -- sources
 
-1. https://cloud.google.com/vision/docs/labels
-2. https://cloud.google.com/vision/docs/ocr
-3. https://cloud.google.com/vision/docs/detecting-faces
-4. https://cloud.google.com/vision/docs/detecting-landmarks
-5. https://googleapis.dev/python/vision/latest/vision_v1/image_annotator.html
-6. https://www.thepythoncode.com/article/extracting-image-metadata-in-python
-7. https://medium.com/crowdbotics/how-to-build-a-real-time-logo-detection-app-with-react-native-google-vision-api-and-crowdbotics-9ed65fbcd15
-8. https://docs.python.org/3.8/library/stdtypes.html#mapping-types-dict
-9. https://github.com/python-pillow/Pillow/issues/4359
-10. https://www.awaresystems.be/imaging/tiff/tifftags.html
-11. https://exiftool.org/TagNames/EXIF.html
-12. https://web.archive.org/web/20190624045241if_/http://www.cipa.jp:80/std/documents/e/DC-008-Translation-2019-E.pdf
+- https://cloud.google.com/vision/docs/labels
+- https://cloud.google.com/vision/docs/ocr
+- https://cloud.google.com/vision/docs/detecting-faces
+- https://cloud.google.com/vision/docs/detecting-landmarks
+- https://googleapis.dev/python/vision/latest/vision_v1/image_annotator.html
+- https://www.thepythoncode.com/article/extracting-image-metadata-in-python
+- https://medium.com/crowdbotics/how-to-build-a-real-time-logo-detection-app-with-react-native-google-vision-api-and-crowdbotics-9ed65fbcd15
+- https://docs.python.org/3.8/library/stdtypes.html#mapping-types-dict
+- https://github.com/python-pillow/Pillow/issues/4359
+- https://www.awaresystems.be/imaging/tiff/tifftags.html
+- https://exiftool.org/TagNames/EXIF.html
+- https://web.archive.org/web/20190624045241if_/http://www.cipa.jp:80/std/documents/e/DC-008-Translation-2019-E.pdf
