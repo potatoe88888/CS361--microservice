@@ -35,3 +35,18 @@ http://127.0.0.1:[PORT NUMER HERE]/image_del_METADATA?url=[INSERT FILE HERE]
 
 5. Review the terminal outputs or see within the browser the JSON output (if applicable to URL). Ability to process image labels and add them as image_description metadata AND ability to delete metadata are now in your hands.
 6. Alternatively, you can look at each image file's property before and after the manipulation to confirm the expected output is what you are looking for.
+
+## microservice -- sources
+
+1. https://cloud.google.com/vision/docs/labels
+2. https://cloud.google.com/vision/docs/ocr
+3. https://cloud.google.com/vision/docs/detecting-faces
+4. https://cloud.google.com/vision/docs/detecting-landmarks
+5. https://googleapis.dev/python/vision/latest/vision_v1/image_annotator.html
+6. https://www.thepythoncode.com/article/extracting-image-metadata-in-python
+7. https://medium.com/crowdbotics/how-to-build-a-real-time-logo-detection-app-with-react-native-google-vision-api-and-crowdbotics-9ed65fbcd15
+8. https://docs.python.org/3.8/library/stdtypes.html#mapping-types-dict
+9. https://github.com/python-pillow/Pillow/issues/4359
+10. https://www.awaresystems.be/imaging/tiff/tifftags.html
+11. https://exiftool.org/TagNames/EXIF.html
+12. https://web.archive.org/web/20190624045241if_/http://www.cipa.jp:80/std/documents/e/DC-008-Translation-2019-E.pdf
