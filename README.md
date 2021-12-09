@@ -8,7 +8,7 @@ This program utilizes Google Vision API and python librarys to execute three tas
 1. Walk through this Google tutorial to set a basic set up: [get_set_up](https://cloud.google.com/vision/docs/setup)
 2. There will become a point where you will be given a (.json) file. Save it, and know where this location is.
 3. Within the `imageMETADATA.py` file, you will see a place that says `credential_path = ""`, within the "", place the location of the file
-4. TIP :: easiest way to ensure this works is to place this file within the same directory/foler as this `imageMETADATA.py` and reference only the "filenamehere.json" within the code.
+4. TIP :: easiest way to ensure this works is to place this file within the same directory/folder as this `imageMETADATA.py` and reference only the "filenamehere.json" within the code.
 5. First time around, I did not set up the Cloud SDK within the setup page, helpful reminder, do actually do this.
 
 ## microservice -- Python libraries needed
